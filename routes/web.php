@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/appointments', [AppointmentController::class, 'show'])->name('appointment.show');
 });
+
+Route::get('/pickup', function () {
+    return Inertia::render('Appoint/Pickup');
+})->name('pickup');
+
+Route::get('/delivery', function () {
+    return Inertia::render('Appoint/Delivery');
+})->name('delivery');
+
+Route::post('/appointment', [AppointmentController::class, 'store'])->name('appointment.store');
+Route::get('/appointment/forbidden-dates', [AppointmentController::class, 'forbiddenDates'])->name('appointment.forbidden-dates');
+Route::get('/appointment/warehouse', [AppointmentController::class, 'getWarehouses'])->name('appointment.warehouse');
+Route::get('/booked-slots', [AppointmentController::class, 'getBookedSlots'])->name('appointment.booked-slots');
+Route::get('/booked-warehouse', [AppointmentController::class, 'getBookedWarehouse'])->name('appointment.booked-warehouse');
 
 require __DIR__.'/auth.php';
