@@ -33,6 +33,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/appointments', [AppointmentController::class, 'show'])->name('appointment.show');
 });
+
+Route::get('/pickup', function () {
+    return Inertia::render('Appoint/Pickup');
+})->name('pickup');
+
+Route::get('/delivery', function () {
+    return Inertia::render('Appoint/Delivery');
+})->name('delivery');
 
 require __DIR__.'/auth.php';
