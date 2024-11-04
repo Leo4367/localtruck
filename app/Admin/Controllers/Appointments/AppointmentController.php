@@ -37,8 +37,12 @@ class AppointmentController extends AdminController
         ]);
         $grid->column('status')->bool();
 
-        $grid->column('created_at', __('Created At'));
-        $grid->column('updated_at', __('Updated At'));
+        $grid->column('created_at', __('Created At'))->display(function (){
+            return $this->created_at->format('Y-m-d H:i:s');
+        });
+        $grid->column('updated_at', __('Updated At'))->display(function (){
+            return $this->updated_at->format('Y-m-d H:i:s');
+        });
 
         $grid->model()->orderBy('time_slot', 'desc');
 

@@ -38,8 +38,12 @@ class AllTimeSlotsController extends AdminController
             ->using(['0' => 'off', '1' => 'on'])
             ->label(['0' => 'danger', '1' => 'success'])
             ->dot(['0' => 'danger', '1' => 'success']);
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'))->hide();
+        $grid->column('created_at', __('Created at'))->display(function () {
+            return $this->created_at->format('Y-m-d H:i:s');
+        });
+        $grid->column('updated_at', __('Updated at'))->display(function (){
+            return $this->updated_at->format('Y-m-d H:i:s');
+        })->hide();
 
         $grid->model()->orderBy('date_slot', 'desc');
 

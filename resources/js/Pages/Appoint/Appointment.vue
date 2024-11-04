@@ -2,11 +2,15 @@
 import {Head} from '@inertiajs/vue3';
 import {defineProps} from 'vue';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import {format} from "date-fns";
 
 // 定义从后端传递过来的属性
 const props = defineProps({
     appointments: Array // appointments 是一个数组
 });
+const showSlotDate = (t) => {
+    return format(t, 'MM/dd/yyyy HH:mm:ss');
+};
 </script>
 
 <template>
@@ -38,7 +42,7 @@ const props = defineProps({
                                     </template>
                                     <div class="appointment-details">
                                         <div class="appointment-label">Time:</div>
-                                        <div class="appointment-value">{{ appointment.time_slot }}</div>
+                                        <div class="appointment-value">{{ showSlotDate(appointment.time_slot) }}</div>
                                     </div>
                                     <div class="appointment-details">
                                         <div class="appointment-label">Number:</div>
@@ -74,7 +78,7 @@ const props = defineProps({
 /* 卡片悬停时的效果 */
 .car-card:hover {
     transform: scale(1.05); /* 悬停时稍微放大 */
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
 }
 
 h2 {

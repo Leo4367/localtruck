@@ -30,8 +30,12 @@ class DeliveryController extends AdminController
         $grid->column('container_number', __('Container Number'));
         $grid->column('warehouse.name', __('Warehouse'))->label('danger');
         $grid->column('status')->bool();
-        $grid->column('created_at', __('Created At'));
-        $grid->column('updated_at', __('Updated At'));
+        $grid->column('created_at', __('Created At'))->display(function (){
+            return $this->created_at->format('Y-m-d H:i:s');
+        });
+        $grid->column('updated_at', __('Updated At'))->display(function (){
+            return $this->updated_at->format('Y-m-d H:i:s');
+        });
 
         $grid->model()->orderBy('time_slot', 'desc');
         // filter($callback)方法用来设置表格的简单搜索框

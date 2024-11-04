@@ -27,8 +27,12 @@ class WarehouseController extends AdminController
         $grid->column('description', __('Description'))->hide();
         $grid->column('phone', __('Phone'))->hide();
         $grid->column('status', __('Active or not'))->bool();
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'))->hide();
+        $grid->column('created_at', __('Created at'))->display(function (){
+            return $this->created_at->format('Y-m-d H:i:s');
+        });
+        $grid->column('updated_at', __('Updated at'))->display(function (){
+            return $this->updated_at->format('Y-m-d H:i:s');
+        })->hide();
 
         $grid->filter(function($filter){
             $filter->column(1/2,function ($filter){

@@ -40,7 +40,9 @@ class DateManageController extends AdminController
             ->using(['0' => 'off', '1' => 'on'])
             ->label(['0' => 'danger', '1' => 'success'])
             ->dot(['0' => 'danger', '1' => 'success']);
-        $grid->column('created_at', __('Created at'));
+        $grid->column('created_at', __('Created at'))->display(function () {
+            return $this->created_at->format('Y-m-d H:i:s');
+        });
 
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
