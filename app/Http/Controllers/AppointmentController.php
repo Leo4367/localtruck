@@ -210,8 +210,8 @@ class AppointmentController extends Controller
     //获取仓库列表信息
     protected function getWarehouses()
     {
-        $warehouses = Warehouse::all()->where('status', 1)->pluck('name', 'id');
-
+        //$warehouses = Warehouse::all()->where('status', 1)->pluck('name', 'id');
+        $warehouses = Warehouse::select('id', 'name', 'address')->where('status', 1)->get()->toArray();
         return response()->json($warehouses);
     }
 

@@ -9,7 +9,7 @@ const props = defineProps({
     appointments: Array // appointments 是一个数组
 });
 const showSlotDate = (t) => {
-    return format(t, 'MM/dd/yyyy HH:mm:ss');
+    return format(t, 'MM/dd/yy HH:mm:ss');
 };
 </script>
 

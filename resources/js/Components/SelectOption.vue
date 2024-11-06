@@ -25,7 +25,7 @@ const warehouseList = () => {
         });
 }
 
-
+console.log(options);
 watch(warehouse_id, (newVal) => {
     emit('update:modelValue', newVal);
 });
@@ -46,8 +46,15 @@ onMounted(
         <el-option
             v-for="(item,index) in options"
             :key="index"
-            :label="item"
-            :value="index"
-        />
+            :label="item.name"
+            :value="item.id"
+        >
+            <!--添加仓库选项的地址描述-->
+            <template #default>
+                <el-tooltip :content="`Addr: ${item.address}`" placement="right">
+                    <span>{{ item.name }}</span>
+                </el-tooltip>
+            </template>
+        </el-option>
     </el-select>
 </template>
