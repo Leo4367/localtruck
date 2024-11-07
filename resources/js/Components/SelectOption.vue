@@ -25,7 +25,6 @@ const warehouseList = () => {
         });
 }
 
-console.log(options);
 watch(warehouse_id, (newVal) => {
     emit('update:modelValue', newVal);
 });

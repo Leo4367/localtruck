@@ -1,5 +1,7 @@
 <?php
 
+use App\Admin\Controllers\Appointments\DeliveryTimeController;
+use App\Admin\Controllers\Appointments\PickupTimeController;
 use Illuminate\Routing\Router;
 use App\Admin\Controllers\Appointments\AppointmentController;
 use App\Admin\Controllers\Appointments\WarehouseController;
@@ -24,5 +26,7 @@ Route::group([
     $router->resource('/appointment/deliveries', DeliveryController::class);
     $router->resource('/appointment/datemanage', DateManageController::class);
     $router->resource('/appointment/alltimeslots', AllTimeSlotsController::class);
+    $router->resource('/appointment/pickup-times', PickupTimeController::class);
+    $router->resource('/appointment/delivery-times', DeliveryTimeController::class);
 
 });

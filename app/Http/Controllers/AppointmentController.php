@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\DateManage;
 use App\Models\Delivery;
+use App\Models\DeliveryTime;
+use App\Models\PickupTime;
 use App\Models\User;
 use App\Models\Pickup;
 use App\Models\Appointment;
@@ -19,14 +21,14 @@ use Inertia\Inertia;
 
 class AppointmentController extends Controller
 {
-    protected array $pickupTime = [
+    /*protected array $pickupTime = [
         "08:00:00", "08:30:00", "09:00:00", "09:30:00", "10:00:00", "10:30:00", "11:00:00", "11:30:00", "12:00:00",
         "13:00:00", "13:30:00", "14:00:00", "14:30:00", "15:00:00", "15:30:00", "16:00:00", "16:30:00"
     ];
     protected array $deliveryTime = [
         "08:00:00", "08:30:00", "09:00:00", "09:30:00", "10:00:00", "10:30:00", "11:00:00",
         "13:00:00", "13:30:00", "14:00:00", "14:30:00", "15:00:00", "15:30:00", "16:00:00", "16:30:00"
-    ];
+    ];*/
 
     public function store(Request $request)
     {
@@ -151,16 +153,19 @@ class AppointmentController extends Controller
                 $allTimeSlots = [];
             }
         } else {
+
             // 如果不是周末，根据类型返回对应时间段
             if ($type === 'Pickup') {
                 $option_pick = [];
-                foreach ($this->pickupTime as $timeSlot) {
+                $pickupTime = PickupTime::where('status',1)->pluck('time');
+                foreach ($pickupTime as $timeSlot) {
                     $option_pick[] = $today->toDateString() . ' ' . $timeSlot;
                 }
                 $allTimeSlots = $option_pick;
             } elseif ($type === 'Delivery') {
                 $option_deli = [];
-                foreach ($this->deliveryTime as $timeSlot) {
+                $deliveryTime = DeliveryTime::where('status',1)->pluck('time');
+                foreach ($deliveryTime as $timeSlot) {
                     $option_deli[] = $today->toDateString() . ' ' . $timeSlot;
                 }
                 $allTimeSlots = $option_deli;
@@ -210,7 +215,6 @@ class AppointmentController extends Controller
     //获取仓库列表信息
     protected function getWarehouses()
     {
-        //$warehouses = Warehouse::all()->where('status', 1)->pluck('name', 'id');
         $warehouses = Warehouse::select('id', 'name', 'address')->where('status', 1)->get()->toArray();
         return response()->json($warehouses);
     }

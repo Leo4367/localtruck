@@ -5,6 +5,7 @@ namespace App\Admin\Controllers\Appointments;
 use App\Models\Warehouse;
 use Encore\Admin\Controllers\AdminController;
 
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -40,6 +41,15 @@ class WarehouseController extends AdminController
                 $filter->equal('status', 'Status')->select(['1' => 'Active', '0' => 'Inactive']);
             });
         });
+
+        // 判断当前用户是否为 "View Only Role" 角色
+        if (Admin::user()->isRole('view-only')) {
+            $grid->disableActions();
+            $grid->disableCreateButton();
+            $grid->batchActions(function ($batch) {
+                $batch->disableDelete(); // 禁用批量删除按钮
+            });
+        }
 
         return $grid;
     }

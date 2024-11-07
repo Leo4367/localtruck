@@ -11,6 +11,7 @@ use Encore\Admin\Show;
 use http\Exception\InvalidArgumentException;
 use Illuminate\Validation;
 use Illuminate\Validation\ValidationException;
+use Encore\Admin\Facades\Admin;
 
 class DateManageController extends AdminController
 {
@@ -51,6 +52,15 @@ class DateManageController extends AdminController
                 $filter->equal('warehouse_id',__('Warehouse'))->select(Warehouse::where('status',1)->pluck('name','id'));
             });
         });
+
+        // 判断当前用户是否为 "View Only Role" 角色
+        if (Admin::user()->isRole('view-only')) {
+            $grid->disableActions();
+            $grid->disableCreateButton();
+            $grid->batchActions(function ($batch) {
+                $batch->disableDelete(); // 禁用批量删除按钮
+            });
+        }
 
         return $grid;
     }
