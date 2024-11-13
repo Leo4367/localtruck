@@ -11,7 +11,7 @@ class Pickup extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'appointment_id',
+        'appointments_id',
         'pickup_number',
         'driver_name',
         'phone_number',

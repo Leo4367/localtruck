@@ -46,11 +46,11 @@ onMounted(
             v-for="(item,index) in options"
             :key="index"
             :label="item.name"
-            :value="item.id"
+            :value="String(item.id)"
         >
             <!--添加仓库选项的地址描述-->
             <template #default>
-                <el-tooltip :content="`Addr: ${item.address}`" placement="right">
+                <el-tooltip :content="`${item.address}`" placement="right">
                     <span>{{ item.name }}</span>
                 </el-tooltip>
             </template>

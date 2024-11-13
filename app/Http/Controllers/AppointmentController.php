@@ -84,7 +84,7 @@ class AppointmentController extends Controller
         // Save the data to the database
         if ($request->type == 'Pickup') {
             Pickup::create([
-                'appointment_id' => $appointment_id,
+                'appointments_id' => $appointment_id,
                 'driver_name' => $request->driver_name,
                 'pickup_number' => $request->pickup_number,
                 'phone_number' => $request->phone_number,
@@ -94,7 +94,7 @@ class AppointmentController extends Controller
         }
         if ($request->type == 'Delivery') {
             Delivery::create([
-                'appointment_id' => $appointment_id,
+                'appointments_id' => $appointment_id,
                 'driver_name' => $request->driver_name,
                 'container_number' => $request->pickup_number,
                 'phone_number' => $request->phone_number,

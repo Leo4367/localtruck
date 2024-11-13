@@ -133,7 +133,7 @@ class AllTimeSlotsController extends AdminController
                     ->where('type', $form->type)
                     ->exists();
 
-                if ($exists) {
+                if (!$form->model()->exists && $exists) {
                     throw ValidationException::withMessages([
                         'date_slot' => $form->time_slot . '-' . $form->warehouse . '-' . $form->type . ' already exists',
                     ]);

@@ -38,7 +38,7 @@ return new class extends Migration
 
         Schema::create('pickups', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('appointment_id')->constrained()->onDelete('cascade');
+            $table->foreignId('appointments_id')->constrained()->onDelete('cascade');
             $table->string('pickup_number');
             $table->string('driver_name');
             $table->string('phone_number');
@@ -51,7 +51,7 @@ return new class extends Migration
 
         Schema::create('deliveries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('appointment_id')->constrained()->onDelete('cascade');
+            $table->foreignId('appointments_id')->constrained()->onDelete('cascade');
             $table->string('container_number');
             $table->string('driver_name');
             $table->string('phone_number');

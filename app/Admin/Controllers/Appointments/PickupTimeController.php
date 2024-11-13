@@ -19,7 +19,18 @@ class PickupTimeController extends AdminController
     {
         $grid = new Grid(new PickupTime());
         $grid->column('id', __('Id'));
-        $grid->column('time', __('Time'));
+        $grid->column('time', __('Time'))->display(function ($time){
+            $label = [
+                false=>'danger',
+                true=>'success',
+            ];
+            $status = $this->status;
+            if($status){
+                return '<span class="label label-'.$label[$status].'">'.$time.'</span>';
+            }else{
+                return '<span class="label label-danger">'.$time.'</span>';
+            }
+        });
         $grid->column('status', __('Status'))->bool();
         $grid->column('created_at', __('Created at'))->display(function () {
             return $this->created_at->format('Y-m-d H:i:s');
@@ -57,7 +68,7 @@ class PickupTimeController extends AdminController
         $form->switch('status', 'Status')->default(true);
 
         $form->saving(function (Form $form) {
-            if(PickupTime::where('time', $form->time)->exists()){
+            if (!$form->model()->exists && PickupTime::where('time', $form->time)->exists()) {
                 throw ValidationException::withMessages([
                     'time' => $form->time . ' already exists',
                 ]);

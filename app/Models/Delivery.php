@@ -11,14 +11,16 @@ class Delivery extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'appointment_id',
+        'appointments_id',
         'container_number',
         'driver_name',
         'phone_number',
         'time_slot',
         'warehouse_id',
     ];
-    public function warehouse(){
-        return $this->belongsTo(Warehouse::class,'warehouse_id');
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class, 'warehouse_id');
     }
 }

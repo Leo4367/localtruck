@@ -120,7 +120,7 @@ class DateManageController extends AdminController
                 ->where('type', $form->type)
                 ->exists();
 
-            if ($exists) {
+            if (!$form->model()->exists && $exists) {
                 throw ValidationException::withMessages([
                     'forbidden_date' => $form->forbidden_date . ' already exists',
                 ]);
