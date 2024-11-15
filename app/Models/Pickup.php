@@ -22,4 +22,10 @@ class Pickup extends Model
     public function warehouse(){
         return $this->belongsTo(Warehouse::class,'warehouse_id');
     }
+
+    // 定义与 Appointment 的反向关系
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class, 'appointments_id');
+    }
 }

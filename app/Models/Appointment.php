@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Appointment extends Model
 {
@@ -24,4 +25,15 @@ class Appointment extends Model
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id');
     }
+
+    public function pickup()
+    {
+        return $this->hasOne(Pickup::class, 'appointments_id');
+    }
+
+    public function delivery()
+    {
+        return $this->hasOne(Delivery::class, 'appointments_id');
+    }
+
 }

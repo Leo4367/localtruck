@@ -10,6 +10,7 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\DB;
 
 class DeliveryController extends AdminController
 {
@@ -26,15 +27,20 @@ class DeliveryController extends AdminController
 
         $grid->column('id', __('ID'))->sortable()->hide();
         $grid->column('time_slot', __('Time Slot'))->sortable();
+        $grid->column('completion_time', __('Completion Time'))->color('green')->sortable();
         $grid->column('driver_name', __('Driver Name'));
         $grid->column('phone_number', __('Phone Number'));
         $grid->column('container_number', __('Container Number'));
-        $grid->column('warehouse.name', __('Warehouse'))->label('danger');
-        $grid->column('status')->bool();
-        $grid->column('created_at', __('Created At'))->display(function (){
+        $grid->column('warehouse_id', __('Warehouse'))->editable('select', Warehouse::where('status', 1)->pluck('name', 'id')->toArray());
+        $grid->column('status')->select([
+            0 => 'No-Show',
+            1 => 'Scheduled',
+            2 => 'Completed',
+        ]);
+        $grid->column('created_at', __('Created At'))->display(function () {
             return $this->created_at->format('Y-m-d H:i:s');
         });
-        $grid->column('updated_at', __('Updated At'))->display(function (){
+        $grid->column('updated_at', __('Updated At'))->display(function () {
             return $this->updated_at->format('Y-m-d H:i:s');
         });
 
@@ -86,12 +92,17 @@ class DeliveryController extends AdminController
 
         $show->field('id', __('ID'));
         $show->field('time_slot', __('Time Slot'));
+        $show->field('completion', __('Completion Time'));
         $show->field('driver_name', __('Driver Name'));
         $show->field('phone_number', __('Phone Number'));
         $show->field('container_number', __('Container Number'));
         $show->field('warehouse.name', __('Warehouse'));
         $show->field('status', __('Status'))->as(function ($status) {
-            return $status ? 'on' : 'off';
+            return [
+                0 => 'No-Show',
+                1 => 'Scheduled',
+                2 => 'Completed',
+            ][strval($status)];
         });
         $show->field('created_at', __('Created At'));
         $show->field('updated_at', __('Updated At'));
@@ -113,17 +124,30 @@ class DeliveryController extends AdminController
         $form->display('driver_name', __('Driver Name'));
         $form->display('phone_number', __('Phone Number'));
         $form->display('container_number', __('Container Number'));
-        $form->display('warehouse.name', __('Warehouse'));
-        $form->switch('status', __('Status'))
-            ->states($this->states);
+        $form->select('warehouse_id', __('Warehouse'))->options(Warehouse::where('status', 1)->pluck('name', 'id')->toArray());
+        $form->radioCard('status', __('Status'))->options([
+            0 => 'No-Show',
+            1 => 'Scheduled',
+            2 => 'Completed',
+        ]);
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
 
         //同步更新 appointments 表的 status 字段
         $form->saved(function (Form $form) {
             $delivery = $form->model();
-            Appointment::where('id', $delivery->appointments_id)
-                ->update(['status' => $delivery->status]);
+
+            DB::transaction(function () use ($delivery) {
+                // 检查状态是否为“Completed”
+                $delivery->completion_time = $delivery->status == 2 ? now() : null;
+                $delivery->save();
+                $updateData = [
+                    'status' => $delivery->status,
+                    'completion_time' => $delivery->completion_time,
+                    'warehouse_id' => $delivery->warehouse_id,
+                ];
+                $delivery->appointment()->update($updateData);
+            });
         });
 
         return $form;
