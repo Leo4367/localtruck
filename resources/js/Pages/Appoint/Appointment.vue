@@ -8,9 +8,32 @@ import {format} from "date-fns";
 const props = defineProps({
     appointments: Array // appointments 是一个数组
 });
+
 const showSlotDate = (t) => {
-    return format(t, 'MM/dd/yy HH:mm:ss');
+    return format(t, 'MM/dd/yy HH:mm');
 };
+
+const showStatus = (i) => {
+    return {
+        0: 'No-Show',
+        1: 'Scheduled',
+        2: 'Completed',
+    }[i]
+};
+
+// 根据状态返回不同的背景色
+const getCardBackgroundColor = (status) => {
+    switch (status) {
+        case 0:
+            return '#d7ca8b'; // 红色
+        case 1:
+            return '#409EFF'; // 橙色
+        case 2:
+            return '#808e8b'; // 绿色
+        default:
+            return '#409EFF'; // 默认颜色
+    }
+}
 </script>
 
 <template>
@@ -34,7 +57,7 @@ const showSlotDate = (t) => {
                                 v-for="(appointment, index) in props.appointments"
                                 :key="index"
                             >
-                                <el-card class="car-card" shadow="hover">
+                                <el-card  class="car-card" :style="{ backgroundColor: getCardBackgroundColor(appointment.status) }" shadow="hover">
                                     <template #header>
                                         <div class="card-header">
                                             <span>{{ appointment.warehouse.name }}</span>
@@ -46,11 +69,23 @@ const showSlotDate = (t) => {
                                     </div>
                                     <div class="appointment-details">
                                         <div class="appointment-label">Number:</div>
-                                        <div class="appointment-value">{{ appointment.pickup_number }}</div>
+                                        <div class="appointment-value">{{ appointment.appt_number }}</div>
                                     </div>
                                     <div class="appointment-details">
                                         <div class="appointment-label">Type:</div>
                                         <div class="appointment-value">{{ appointment.type }}</div>
+                                    </div>
+                                    <div class="appointment-details">
+                                        <div class="appointment-label">Addr:</div>
+                                        <div class="appointment-value">{{ appointment.warehouse.address }}</div>
+                                    </div>
+                                    <div class="appointment-details">
+                                        <div class="appointment-label">Dock#:</div>
+                                        <div class="appointment-value">{{ appointment.dock_number }}</div>
+                                    </div>
+                                    <div class="appointment-details">
+                                        <div class="appointment-label">Status:</div>
+                                        <div class="appointment-value">{{ showStatus(appointment.status) }}</div>
                                     </div>
                                 </el-card>
                             </el-col>
@@ -67,6 +102,17 @@ const showSlotDate = (t) => {
 .car-card {
     margin-top: 20px;
     background-color: #409EFF; /* 设置卡片的背景颜色 */
+    border-radius: 10px; /* 添加圆角 */
+    color: white; /* 设置文字颜色为白色 */
+    padding: 20px; /* 增加卡片的内边距 */
+    transition: transform 0.3s, box-shadow 0.3s; /* 添加动画效果 */
+    min-width: 250px; /* 添加卡片最小宽度 */
+    max-width: 100%; /* 确保卡片在移动端的宽度不会超出容器 */
+}
+
+.car-card2 {
+    margin-top: 20px;
+    background-color: #c2cdd9; /* 设置卡片的背景颜色 */
     border-radius: 10px; /* 添加圆角 */
     color: white; /* 设置文字颜色为白色 */
     padding: 20px; /* 增加卡片的内边距 */

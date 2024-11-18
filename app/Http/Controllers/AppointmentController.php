@@ -10,45 +10,45 @@ use App\Models\User;
 use App\Models\Pickup;
 use App\Models\Appointment;
 use App\Models\Warehouse;
+use App\Providers\RouteServiceProvider;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\AppointmentNotification;
+
+// 假设你创建了一个发送短信的通知类
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 
 class AppointmentController extends Controller
 {
-    /*protected array $pickupTime = [
-        "08:00:00", "08:30:00", "09:00:00", "09:30:00", "10:00:00", "10:30:00", "11:00:00", "11:30:00", "12:00:00",
-        "13:00:00", "13:30:00", "14:00:00", "14:30:00", "15:00:00", "15:30:00", "16:00:00", "16:30:00"
-    ];
-    protected array $deliveryTime = [
-        "08:00:00", "08:30:00", "09:00:00", "09:30:00", "10:00:00", "10:30:00", "11:00:00",
-        "13:00:00", "13:30:00", "14:00:00", "14:30:00", "15:00:00", "15:30:00", "16:00:00", "16:30:00"
-    ];*/
-
     public function store(Request $request)
     {
         // Validate the input data
         $validated = $request->validate([
             'driver_name' => 'required|string|max:255',
-            'pickup_number' => 'required|string|max:255',
+            'appt_number' => 'required|string|max:255',
             'phone_number' => 'required|string|max:15',
+            'po_number' => 'required|string',
             'time_slot' => 'required|string',
             'warehouse_id' => 'required|string',
+            'dock_number' => 'required',
             'type' => 'required|string|in:Pickup,Delivery', // 验证 type 字段
         ]);
-
+        $type = $request->type;
+        $model = ($type === 'Pickup') ? new Pickup() : new Delivery();
         // 查找该 time_slot 是否已被预约
-        $existingAppointment = Appointment::where('time_slot', $request->time_slot)
-            ->where('type', $request->type) // 只检查同类型的预约
+        $existingAppointment = $model::where('time_slot', $request->time_slot)
             ->where('warehouse_id', $request->warehouse_id)
-            ->first();
+            ->where('dock_number', $request->dock_number)
+            ->count();
 
-        if ($existingAppointment) {
+        if ($existingAppointment >= 2) {
             return back()->withErrors(['time_slot' => 'This time slot has been booked. Please select another time.']);
         }
 
@@ -69,38 +69,33 @@ class AppointmentController extends Controller
             //Notification::send($user, new AppointmentNotification($password));
         }
         $pa = [
-            'id' => $user->id,
+            'user_id' => $user->id,
             'phone_number' => $request->phone_number,
-            'pickup_number' => $request->pickup_number,
+            'appt_number' => $request->appt_number,
+            'po_number' => $request->po_number,
             'time_slot' => $request->time_slot,
             'warehouse_id' => $request->warehouse_id,
             'driver_name' => $request->driver_name,
-            'type' => $request->type,
+            'dock_number' => $request->dock_number,
         ];
-        // 创建预约记录
-        $appointment_id = $this->appointment_id($pa);
         // 登录用户
         Auth::login($user);
         // Save the data to the database
-        if ($request->type == 'Pickup') {
-            Pickup::create([
-                'appointments_id' => $appointment_id,
-                'driver_name' => $request->driver_name,
-                'pickup_number' => $request->pickup_number,
-                'phone_number' => $request->phone_number,
-                'time_slot' => $request->time_slot,
-                'warehouse_id' => $request->warehouse_id,
-            ]);
+        if ($type == 'Pickup') {
+            $isNotification = Pickup::create($pa);
+            if ($isNotification) {
+                $etruck = User::find(3);
+                $isNotification->type = 'Pickup';
+                //Notification::send($etruck, new AppointmentNotification($isNotification));
+            }
         }
-        if ($request->type == 'Delivery') {
-            Delivery::create([
-                'appointments_id' => $appointment_id,
-                'driver_name' => $request->driver_name,
-                'container_number' => $request->pickup_number,
-                'phone_number' => $request->phone_number,
-                'time_slot' => $request->time_slot,
-                'warehouse_id' => $request->warehouse_id,
-            ]);
+        if ($type == 'Delivery') {
+            $isNotification = Delivery::create($pa);
+            if ($isNotification) {
+                $etruck = User::find(3);
+                $isNotification->type = 'Delivery';
+                //Notification::send($etruck, new AppointmentNotification($isNotification));
+            }
         }
 
         // Return a response (or redirect)
@@ -111,12 +106,29 @@ class AppointmentController extends Controller
     {
         /// 获取当前登录用户的ID
         $user = Auth::user();
-
         // 获取该用户所有预约信息,status为有效预约
-        $appointments = Appointment::with('warehouse')
+        $pickups = Pickup::with('warehouse')
             ->where('user_id', $user->id)
-            ->where('status', 1)
-            ->get();
+            //->where('status', '=', 1)
+            ->whereNull('deleted_at')
+            ->get()
+            ->map(function ($pickup) {
+                $pickup->type = "Pickup";
+                return $pickup;
+            })
+            ->toArray();
+        $deliveries = Delivery::with('warehouse')
+            ->where('user_id', $user->id)
+            //->where('status', '=', 1)
+            ->whereNull('deleted_at')
+            ->get()
+            ->map(function ($delivery) {
+                $delivery->type = 'Delivery';
+                return $delivery;
+            })
+            ->toArray();
+
+        $appointments = array_merge($pickups, $deliveries);
 
         // 返回到前端的Vue页面，并将预约信息传递过去
         return Inertia::render('Appoint/Appointment', [
@@ -130,8 +142,9 @@ class AppointmentController extends Controller
         $type = $request->input('type');
         $warehouse_id = $request->input('warehouse_id');
         $today = Carbon::parse($request->slot);
+        $dock_number = $request->input('dock_number');
 
-        if (empty($warehouse_id)) {
+        if (empty($warehouse_id) or empty($dock_number)) {
             return response()->json(['message' => 'Please select the warehouse first']);
         }
 
@@ -153,33 +166,45 @@ class AppointmentController extends Controller
                 $allTimeSlots = [];
             }
         } else {
-
             // 如果不是周末，根据类型返回对应时间段
             if ($type === 'Pickup') {
                 $option_pick = [];
-                $pickupTime = PickupTime::where('status',1)->pluck('time');
+                $pickupTime = PickupTime::where('status', 1)->pluck('time');
                 foreach ($pickupTime as $timeSlot) {
                     $option_pick[] = $today->toDateString() . ' ' . $timeSlot;
                 }
                 $allTimeSlots = $option_pick;
             } elseif ($type === 'Delivery') {
                 $option_deli = [];
-                $deliveryTime = DeliveryTime::where('status',1)->pluck('time');
+                $deliveryTime = DeliveryTime::where('status', 1)->pluck('time');
                 foreach ($deliveryTime as $timeSlot) {
                     $option_deli[] = $today->toDateString() . ' ' . $timeSlot;
                 }
                 $allTimeSlots = $option_deli;
+
             } else {
                 return ['message' => 'Invalid type.'];
             }
         }
 
-        // 查询特定类型 (Pickup 或 Delivery) 的已预约时间段
-        $bookedSlots = Appointment::where('type', $type)
-            ->whereDate('time_slot', $today)
-            ->where('warehouse_id', $warehouse_id)
-            ->pluck('time_slot')
-            ->toArray();
+        $model = ($type === 'Pickup') ? new Pickup() : new Delivery();
+        $bookedSlots = $model::whereDate('time_slot', $today)  // 只查找今天的预约
+        ->where('warehouse_id', $warehouse_id) // 特定仓库
+        ->where('dock_number', $dock_number) // 特定Dock
+        ->select('time_slot', DB::raw('COUNT(*) as count'))  // 统计每个时间段的预约数量
+        ->groupBy('time_slot')  // 按时间段分组
+        ->having('count', '=', 2)  // 只选择已预约 2 次的时间段
+        ->pluck('time_slot')  // 获取时间段列表
+        ->toArray();
+
+        /*$bookedSlots = Appointment::where('type', $type)
+            ->whereDate('time_slot', $today)  // 只查找今天的预约
+            ->where('warehouse_id', $warehouse_id) // 特定仓库
+            ->select('time_slot', DB::raw('COUNT(*) as count'))  // 统计每个时间段的预约数量
+            ->groupBy('time_slot')  // 按时间段分组
+            ->having('count', '=', 2)  // 只选择已预约 2 次的时间段
+            ->pluck('time_slot')  // 获取时间段列表
+            ->toArray();*/
 
         return response()->json(['booked' => $bookedSlots, 'allTimeSlots' => $allTimeSlots]);
     }
@@ -198,24 +223,11 @@ class AppointmentController extends Controller
         return response()->json($forbiddenDates);
     }
 
-    protected function appointment_id($pa)
-    {
-        $appointment = Appointment::create([
-            'user_id' => $pa['id'],
-            'phone_number' => $pa['phone_number'],
-            'pickup_number' => $pa['pickup_number'],
-            'time_slot' => $pa['time_slot'],
-            'driver_name' => $pa['driver_name'],
-            'type' => $pa['type'],
-            'warehouse_id' => $pa['warehouse_id'],
-        ]);
-        return $appointment->id;
-    }
-
     //获取仓库列表信息
     protected function getWarehouses()
     {
         $warehouses = Warehouse::select('id', 'name', 'address')->where('status', 1)->get()->toArray();
+
         return response()->json($warehouses);
     }
 

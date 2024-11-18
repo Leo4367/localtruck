@@ -4,22 +4,23 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
-import {Head, useForm,usePage} from "@inertiajs/vue3";
+import {Head, useForm, usePage} from "@inertiajs/vue3";
 import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {format} from 'date-fns';
-import SelectOption from "@/Components/SelectOption.vue";
-import {ElMessage} from "element-plus";  // 用于格式化日期
+import {ElMessage} from 'element-plus';
 
 const {props} = usePage();
 
 const form = useForm({
-    pickup_number: '',
+    appt_number: '',
     phone_number: '',
+    po_number: '',
     driver_name: '',
     warehouse_id: '',
     time_slot: '',
     type: 'Delivery',
+    dock_number: '',
 });
 
 // 自动填充用户信息（如果已登录）
@@ -35,6 +36,8 @@ const bookedSlots = ref([]);
 const availableTimeSlots = ref([]);
 const value1 = ref(null);
 const forbiddenDates = ref([]);  // 存储禁用日期
+const options = ref([]);
+const docks = {1: 42, 2: 44,};
 
 const showSlotDate = (t) => {
     return format(t, 'HH:mm');
@@ -46,7 +49,7 @@ const chooseTimeSlot = (t) => {
         try {
             //从后端获取可预约时间
             axios.get(route('appointment.booked-slots'),
-                {params: {type: 'Delivery', slot: t, warehouse_id: form.warehouse_id}}
+                {params: {type: 'Delivery', slot: t, warehouse_id: form.warehouse_id, dock_number: form.dock_number}}
             ).then(function (response) {
                 bookedSlots.value = response.data['booked'];
                 //optionTime.value = allTimeSlots.map(slot => `${t} ${slot}`);
@@ -101,7 +104,7 @@ const submit = () => {
             ElMessage({
                 message: 'Appointment successfully created.',
                 type: 'success',
-            })
+            });
         },
         onError: (errors) => {
             // 获取并显示详细的错误信息
@@ -118,6 +121,28 @@ const submit = () => {
     });
 };
 
+// 加载仓库列表
+const loadWarehouseList = (dockNumber) => {
+    if (!dockNumber) {
+        options.value = []; // 重置仓库列表
+        return;
+    }
+    axios.get(route('appointment.warehouse'))
+        .then(response => {
+            options.value = response.data; // 更新仓库列表
+        })
+        .catch(error => {
+            console.error('Error fetching warehouse list:', error);
+        });
+};
+
+// 当 Dock Number 改变时清空 Warehouse 并加载新列表
+const chooseDock = (dock_value) => {
+    form.dock_number = dock_value; // 更新当前选中的 Dock Number
+    form.warehouse_id = ''; // 清空已选的 Warehouse
+    loadWarehouseList(dock_value); // 根据 Dock 加载对应的 Warehouse 列表
+};
+
 </script>
 
 <template>
@@ -127,7 +152,7 @@ const submit = () => {
         <form @submit.prevent="submit">
             <!-- Name Input -->
             <div>
-                <InputLabel for="driver_name" value="Name"/>
+                <InputLabel for="driver_name" value="Company Name"/>
                 <TextInput
                     id="driver_name"
                     type="text"
@@ -155,21 +180,74 @@ const submit = () => {
             </div>
             <!-- Pickup Number Input -->
             <div class="mt-4">
-                <InputLabel for="pickup_number" value="Container Number"/>
+                <InputLabel for="appt_number" value="Container Number"/>
                 <TextInput
-                    id="pickup_number"
+                    id="appt_number"
                     type="text"
                     class="mt-1 block w-full"
-                    v-model="form.pickup_number"
+                    v-model="form.appt_number"
                     required
                     autofocus
                 />
-                <InputError class="mt-2" :message="form.errors.pickup_number"/>
+                <InputError class="mt-2" :message="form.errors.appt_number"/>
             </div>
 
             <div class="mt-4">
+                <InputLabel for="po_number" value="PO Number"/>
+                <TextInput
+                    id="po_number"
+                    type="tel"
+                    class="mt-1 block w-full"
+                    v-model="form.po_number"
+                    required
+                    autocomplete="tel"
+                />
+                <InputError class="mt-2" :message="form.errors.po_number"/>
+            </div>
+
+            <!-- Dock Number Input -->
+            <div class="mt-4">
+                <InputLabel for="dock_number" value="Dock Number"/>
+                <el-select
+                    v-model="form.dock_number"
+                    placeholder="Select Dock#"
+                    size="large"
+                    @change="chooseDock"
+                >
+                    <el-option
+                        v-for="(dock,index) in docks"
+                        :key="index"
+                        :label="dock"
+                        :value="dock"
+                    ></el-option>
+                </el-select>
+                <InputError class="mt-2" :message="form.errors.dock_number"/>
+            </div>
+
+            <!--warehouse -->
+            <div class="mt-4">
                 <InputLabel for="warehouse_id" value="Warehouse"/>
-                <SelectOption v-model="form.warehouse_id" @change="getForbiddenDates($event)"/>
+                <el-select
+                    v-model="form.warehouse_id"
+                    placeholder="Select Warehouse"
+                    size="large"
+                    :disabled="!form.dock_number"
+                    @change="getForbiddenDates"
+                >
+                    <el-option
+                        v-for="(item,index) in options"
+                        :key="index"
+                        :label="item.name"
+                        :value="String(item.id)"
+                    >
+                        <!--添加仓库选项的地址描述-->
+                        <template #default>
+                            <el-tooltip :content="`${item.address}`" placement="right">
+                                <span>{{ item.name }}</span>
+                            </el-tooltip>
+                        </template>
+                    </el-option>
+                </el-select>
                 <InputError class="mt-2" :message="form.errors.warehouse_id"/>
             </div>
 

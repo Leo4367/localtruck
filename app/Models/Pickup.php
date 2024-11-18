@@ -12,20 +12,17 @@ class Pickup extends Model
 
     protected $fillable = [
         'appointments_id',
-        'pickup_number',
+        'appt_number',
         'driver_name',
         'phone_number',
         'time_slot',
         'warehouse_id',
+        'po_number',
+        'dock_number',
+        'user_id',
     ];
 
     public function warehouse(){
         return $this->belongsTo(Warehouse::class,'warehouse_id');
-    }
-
-    // 定义与 Appointment 的反向关系
-    public function appointment()
-    {
-        return $this->belongsTo(Appointment::class, 'appointments_id');
     }
 }
