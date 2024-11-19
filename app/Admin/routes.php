@@ -20,7 +20,7 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('home');
-    $router->resource('/appointment/total', AppointmentController::class);
+    //$router->resource('/appointment/total', AppointmentController::class);
     $router->resource('/appointment/warehouse', WarehouseController::class);
     $router->resource('/appointment/pickups', PickupController::class);
     $router->resource('/appointment/deliveries', DeliveryController::class);
