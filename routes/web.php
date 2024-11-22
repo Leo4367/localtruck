@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\BrokerController;
+use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -46,10 +48,17 @@ Route::get('/delivery', function () {
     return Inertia::render('Appoint/Delivery');
 })->name('delivery');
 
+Route::get('/broker', function () {
+    return Inertia::render('Appoint/Broker');
+})->name('broker');
+
+
 Route::post('/appointment', [AppointmentController::class, 'store'])->name('appointment.store');
 Route::get('/appointment/forbidden-dates', [AppointmentController::class, 'forbiddenDates'])->name('appointment.forbidden-dates');
 Route::get('/appointment/warehouse', [AppointmentController::class, 'getWarehouses'])->name('appointment.warehouse');
 Route::get('/booked-slots', [AppointmentController::class, 'getBookedSlots'])->name('appointment.booked-slots');
 Route::get('/booked-warehouse', [AppointmentController::class, 'getBookedWarehouse'])->name('appointment.booked-warehouse');
+Route::post('/broker-sendemail', [InquiryController::class, 'store'])->name('inquiry.store');
+Route::get('/broker-sendemail', [InquiryController::class, 'index'])->name('inquiry.index');
 
 require __DIR__.'/auth.php';

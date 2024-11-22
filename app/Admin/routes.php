@@ -2,8 +2,12 @@
 
 use App\Admin\Controllers\Appointments\DeliveryTimeController;
 use App\Admin\Controllers\Appointments\PickupTimeController;
+use App\Admin\Controllers\InquiryPrice\InquiryPriceController;
+use App\Admin\Controllers\InquiryPrice\SendEmailController;
+use App\Admin\Controllers\InquiryPrice\WorkController;
+use App\Admin\Controllers\InquiryPrice\BrokerController;
 use Illuminate\Routing\Router;
-use App\Admin\Controllers\Appointments\AppointmentController;
+
 use App\Admin\Controllers\Appointments\WarehouseController;
 use App\Admin\Controllers\Appointments\AllTimeSlotsController;
 use App\Admin\Controllers\Appointments\DateManageController;
@@ -28,5 +32,9 @@ Route::group([
     $router->resource('/appointment/alltimeslots', AllTimeSlotsController::class);
     $router->resource('/appointment/pickup-times', PickupTimeController::class);
     $router->resource('/appointment/delivery-times', DeliveryTimeController::class);
+    $router->resource('/inquiryprice/send-email', SendEmailController::class);
+    $router->resource('/inquiryprice/inquiry-price', InquiryPriceController::class);
+    $router->resource('/inquiryprice/work', WorkController::class);
+    $router->resource('/inquiryprice/broker', BrokerController::class);
 
 });
