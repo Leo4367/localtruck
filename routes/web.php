@@ -52,6 +52,10 @@ Route::get('/broker', function () {
     return Inertia::render('Appoint/Broker');
 })->name('broker');
 
+Route::get('/price',function (){
+    return Inertia::render('Broker/Price');
+});
+
 
 Route::post('/appointment', [AppointmentController::class, 'store'])->name('appointment.store');
 Route::get('/appointment/forbidden-dates', [AppointmentController::class, 'forbiddenDates'])->name('appointment.forbidden-dates');

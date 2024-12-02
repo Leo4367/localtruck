@@ -66,48 +66,62 @@ class InquiryController extends Controller
 
     public function index()
     {
+        // 获取所有工作记录及其关联的报价
         $works = Work::with(['inquiries' => function ($query) {
-            $query->with('broker'); // Load brokers for each inquiry
+            $query->with('broker'); // 加载关联的 broker 信息
         }])->get();
 
+        // 获取所有 broker 信息
+        $brokers = Broker::all();
 
-        $brokers = Broker::pluck('broker_name'); // Get all broker names
+        // 构建 columns 嵌套数据结构
+        $columns = $brokers
+            ->groupBy('company_name') // 按公司分组
+            ->map(function ($group, $company) {
+                return [
+                    'label' => $company,
+                    'children' => $group->map(function ($broker) {
+                        return [
+                            'label' => $broker->broker_name,
+                            'prop' => $broker->broker_name, // 动态列名，后端要与前端绑定
+                        ];
+                    }),
+                ];
+            });
 
+        // 构建 tableData 表格数据
         $tableData = $works->map(function ($work) use ($brokers) {
-            // Base row data
+            // 初始化基础数据
             $row = [
                 'customer_name' => $work->customer_name,
                 'deliver_address' => $work->address,
                 'work_order' => $work->work_order,
             ];
 
-            // Broker quotes
-            $quotes = [];
+            // 初始化报价数据
+            $quotes = []; // 存储每个 broker 的报价
             foreach ($brokers as $broker) {
-                // Get the price for the current broker
-                $inquiry = $work->inquiries->firstWhere('broker.broker_name', $broker);
-                $quotes[$broker] = $inquiry ? $inquiry->price : null;
-                $row[$broker] = $quotes[$broker];
+                $inquiry = $work->inquiries->firstWhere('broker.id', $broker->id);
+                $price = $inquiry ? $inquiry->price : null;
+                $row[$broker->broker_name] = $price; // 填充 broker 的报价
+
+                if ($price !== null) {
+                    $quotes[] = $price; // 收集有效报价用于计算差价
+                }
             }
 
-            // Calculate the spread if there are valid quotes
-            $validQuotes = array_filter($quotes, fn($price) => !is_null($price));
-            $row['spread'] = count($validQuotes) > 1
-                ? max($validQuotes) - min($validQuotes)
-                : null;
+            // 计算差价 (spread) —— 每一行所有报价的最大差价
+            $row['spread'] = count($quotes) > 1 ? max($quotes) - min($quotes) : null;
 
             return $row;
         });
 
-
         return Inertia::render('Broker/Price', [
             'tableData' => $tableData,
-            'columns' => $brokers->map(fn($name) => [
-                'label' => $name . '($)',
-                'prop' => $name,
-            ]),
+            'columns' => $columns->values()->toArray(), // 嵌套结构的 columns
         ]);
     }
+
 
 
 }
