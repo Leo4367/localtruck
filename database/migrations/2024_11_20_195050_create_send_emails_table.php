@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('works', function (Blueprint $table) {
+        Schema::create('purchasers', function (Blueprint $table) {
             $table->id();
             $table->string('customer_name');
             $table->string('address');
@@ -29,7 +29,7 @@ return new class extends Migration
 
         Schema::create('inquiry_price', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('work_id')->constrained('works')->onDelete('cascade'); // 关联 works
+            $table->foreignId('purchaser_id')->constrained('purchasers')->onDelete('cascade'); // 关联 works
             $table->foreignId('broker_id')->constrained('brokers')->onDelete('cascade'); // 关联 broker
             $table->float('price')->nullable(); // 报价金额
             $table->timestamps();
@@ -42,10 +42,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('inquiry_price', function (Blueprint $table) {
-            $table->dropForeign(['work_id']);
+            $table->dropForeign(['purchaser_id']);
             $table->dropForeign(['broker_id']);
         });
-        Schema::dropIfExists('works');
+        Schema::dropIfExists('purchasers');
         Schema::dropIfExists('brokers');
         Schema::dropIfExists('inquiry_price');
     }

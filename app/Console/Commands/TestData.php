@@ -127,8 +127,7 @@ class TestData extends Command
         return $result;
     }
 
-
-    protected function fullJustify()
+    protected function fulljustify()
     {
         $words = ["This", "is", "an", "example", "of", "text", "justification."];
         $maxWidth = 16;
@@ -148,7 +147,60 @@ class TestData extends Command
                 $i--;
             }
         }
-        dd($wordsTwo);
+        if (count($wordsTwo)) $wordsTwo[] = $tempArr;
+        $wordsTwoLen = count($wordsTwo);
+        for ($i = 0; $i < $wordsTwoLen; $i++) {
+            // 要补的全部空格长度
+            $spaceLen = $maxWidth - strlen(implode('', $wordsTwo[$i]));
+            // 当前行长度
+            $iArrLen = count($wordsTwo[$i]);
+            // 当行只包含一个单词为左对齐
+            if ($iArrLen == 1) {
+                $result[] = $wordsTwo[$i][0] . $this->makeSpace($spaceLen);
+                continue;
+            }
+            // 最后一行应为左对齐，且单词之间不插入额外的空格
+            if (($wordsTwoLen - 1) == $i) {
+                $lastStr = implode(' ', $wordsTwo[$i]);
+                $result[] = $lastStr . $this->makeSpace($maxWidth - strlen($lastStr));
+                continue;
+            }
+
+            $makeSpaceLen = $spaceLen / ($iArrLen - 1);
+            // 如果可以整除，均铺
+            if ($makeSpaceLen == intval($makeSpaceLen)) {
+                $spaceStr = $this->makeSpace($makeSpaceLen);
+                $result[] = implode($spaceStr, $wordsTwo[$i]);
+                continue;
+            }
+
+            $rowStr = '';
+            // 未整除  则左侧放置的空格数要多于右侧的空格数
+            $iArrLenTmp = $iArrLen;
+            $makeSpaceLenCeil = ceil($makeSpaceLen);  //先得到多的空格
+            for ($j = 0; $j < $iArrLen; $j++) {
+
+                $rowStr .= $wordsTwo[$i][$j];
+
+                // 剩余拼接的长度小于
+                if ($spaceLen < $makeSpaceLenCeil) continue;
+
+                // 先拼上最大的 ，剩下的再去分
+                $rowStr .= $this->makeSpace($makeSpaceLenCeil);
+                // 拼接空格数量更新 总长缩减
+                $spaceLen = $spaceLen - $makeSpaceLenCeil;
+                // 去掉当前单词，剩下的单词再去分
+                $iArrLenTmp--;
+                if ($iArrLenTmp == 1) {
+                    $makeSpaceLenCeil = 1;
+                } else {
+                    $makeSpaceLen = $spaceLen / ($iArrLenTmp - 1);
+                    $makeSpaceLenCeil = ceil($makeSpaceLen);
+                }
+            }
+            $result[] = $rowStr;
+        }
+        dd($result);
     }
 
     // 生成空格
@@ -164,6 +216,21 @@ class TestData extends Command
     {
         Mail::to('websupport@del-ev.com')->send(new TestEmail());
         dd('Test email sent!');
+    }
+
+    /**
+     * 邮件格式验证
+     */
+    protected function validateemail()
+    {
+        //$email = "websupport@del-ev.com";
+        $email = "sus@evolutionelectricvehicle.com";
+        $isMatched = preg_match('/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/', $email, $matches);
+        if ($isMatched) {
+            $this->info('有效的电子邮件地址:' . $email);
+        } else {
+            $this->error('无效的电子邮件地址：' . $email);
+        }
     }
 
 }

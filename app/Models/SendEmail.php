@@ -2,48 +2,19 @@
 
 namespace App\Models;
 
-use Encore\Admin\Auth\Database\Administrator;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SendEmail extends Model
 {
-    use HasFactory;
+    protected $fillable = ['purchaser_id', 'broker_id', 'price'];
 
-    /*protected $fillable = [
-        'user_id',
-        'customer_name',
-        'company_name',
-        'address',
-        'email',
-        'work_order',
-        'cornerstone',
-        'tlx',
-        'tql',
-        'spread',
-    ];*/
-    protected $fillable = [
-        'user_id',
-        'data',
-        'message',
-    ];
-
-    protected $casts = [
-        'data' => 'json',
-    ];
-
-    public function getColumnNameAttribute($value)
+    public function purchaser()
     {
-        return array_values(json_decode($value, true) ?: []);
+        return $this->belongsTo(Purchaser::class, 'purchaser_id');
     }
 
-    public function setColumnNameAttribute($value)
+    public function broker()
     {
-        $this->attributes['data'] = json_encode(array_values($value));
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(Administrator::class, 'user_id');
+        return $this->belongsTo(Broker::class, 'broker_id');
     }
 }

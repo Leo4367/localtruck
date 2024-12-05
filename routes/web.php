@@ -38,6 +38,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/appointments', [AppointmentController::class, 'show'])->name('appointment.show');
+    Route::post('/broker-sendemail', [InquiryController::class, 'store'])->name('inquiry.store');
+    Route::get('/price', [InquiryController::class, 'index'])->name('price');
+    Route::get('/tempprice', [InquiryController::class, 'tempindex'])->name('tempprice');
+    Route::post('/update-price', [InquiryController::class, 'updateprice'])->name('updateprice');
+    Route::get('/get-tabledata', [InquiryController::class, 'gettabledata'])->name('gettabledata');
 });
 
 Route::get('/pickup', function () {
@@ -52,9 +57,11 @@ Route::get('/broker', function () {
     return Inertia::render('Appoint/Broker');
 })->name('broker');
 
-Route::get('/price',function (){
-    return Inertia::render('Broker/Price');
-});
+Route::get('/priceparent', function () {
+    return Inertia::render('Broker/PriceParent');
+})->name('priceparent');
+
+
 
 
 Route::post('/appointment', [AppointmentController::class, 'store'])->name('appointment.store');

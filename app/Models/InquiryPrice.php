@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class InquiryPrice extends Model
 {
     protected $table = 'inquiry_price';
-    protected $fillable = ['work_id', 'broker_id', 'price'];
+    protected $fillable = ['purchaser_id', 'broker_id', 'price'];
 
-    public function work()
+    public function purchaser()
     {
-        return $this->belongsTo(Work::class, 'work_id');
+        return $this->belongsTo(Purchaser::class, 'purchaser_id');
     }
 
     public function broker()

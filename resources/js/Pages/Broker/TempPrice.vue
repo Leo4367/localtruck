@@ -1,17 +1,12 @@
 <script setup>
-import {Head} from "@inertiajs/vue3";
-import { onMounted, ref} from "vue";
+import { Head } from "@inertiajs/vue3";
+import { onMounted, ref } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {ElMessage, ElMessageBox} from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus';
 import axios from "axios";
 
-const props = defineProps({
-    tableData: Array,
-    columns: Array,
-});
-
-const tableData = ref(props.tableData);
-const columns = ref(props.columns);
+const tableData = ref([]);
+const columns = ref([]);
 
 const fetchTableData = async () => {
     try {
@@ -27,7 +22,7 @@ onMounted(() => {
     fetchTableData();
 });
 
-// 最低价高亮
+// 低价高亮
 function cellClassName({ row, column }) {
     // 使用 columns.value 来代替 dataAll.columns
     const brokerColumns = columns.value.flatMap((col) =>
@@ -110,9 +105,7 @@ const cell_dblclick = (row, column) => {
                 message: 'Input canceled',
             });
         });
-
 }
-
 </script>
 
 <template>
@@ -130,7 +123,7 @@ const cell_dblclick = (row, column) => {
                             :data="tableData"
                             border
                             @cell-dblclick="cell_dblclick"
-                            :header-cell-style="{ textAlign: 'center',backgroundColor:'#a1d3c5',fontWeight:'blod',color:'#000000' }"
+                            :header-cell-style="{ textAlign: 'center', backgroundColor:'#a1d3c5', fontWeight:'blod', color:'#000000' }"
                             :cell-style="cellClassName"
                         >
                             <el-table-column prop="customer_name" label="Name" width="180"/>
@@ -154,8 +147,10 @@ const cell_dblclick = (row, column) => {
                                     :key="broker.prop"
                                     :prop="broker.prop"
                                     :label="broker.label"
-                                />
+                                >
+                                </el-table-column>
                             </el-table-column>
+
                             <el-table-column
                                 prop="spread"
                                 label="差价 ($)"
@@ -167,13 +162,10 @@ const cell_dblclick = (row, column) => {
             </div>
         </div>
     </AuthenticatedLayout>
-
 </template>
 
 <style scoped>
-
 table {
-
     background: linear-gradient(to bottom, #f8ffe8 0%, #e3f5ab 23%, #b7df2d 100%);
 }
 </style>

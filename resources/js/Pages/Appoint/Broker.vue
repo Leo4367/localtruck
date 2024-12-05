@@ -1,10 +1,10 @@
 <script setup>
-import {Head, useForm, usePage} from "@inertiajs/vue3";
-import GuestLayout from "@/Layouts/GuestLayout.vue";
+import {Head, useForm} from "@inertiajs/vue3";
 import {ElMessage} from "element-plus";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 
 const form = useForm({
@@ -43,52 +43,67 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
+    <AuthenticatedLayout>
         <Head title="Broker"/>
-        <el-form @submit.prevent="submit">
-            <div class="mt-4">
-                <InputLabel for="customer_name" value="Customer Name"/>
-                <el-input
-                    id="customer_name"
-                    class="mt-1 block w-full"
-                    type="textarea"
-                    v-model="form.customer_name"
-                />
-                <InputError class="mt-2" :message="form.errors.customer_name"/>
-            </div>
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight" style="text-align: center">Broker Inquiry</h2>
+        </template>
+        <el-row :gutter="20">
+            <el-col :span="12" :offset="6">
+                <el-form @submit.prevent="submit">
+                    <div class="mt-4">
+                        <InputLabel for="customer_name" value="Customer Name"/>
+                        <el-input
+                            id="customer_name"
+                            class="mt-1 block w-full"
+                            type="textarea"
+                            v-model="form.customer_name"
+                            autosize
+                            placeholder="Only one valid Name can be entered in a row"
+                        />
+                        <InputError class="mt-2" :message="form.errors.customer_name"/>
+                    </div>
 
-            <!--Deliver Address input -->
-            <div class="mt-4">
-                <InputLabel for="deliver_address" value="Deliver Address"/>
-                <el-input
-                    id="deliver_address"
-                    class="mt-1 block w-full"
-                    type="textarea"
-                    v-model="form.deliver_address"
-                />
-                <InputError class="mt-2" :message="form.errors.deliver_address"/>
-            </div>
+                    <!--Deliver Address input -->
+                    <div class="mt-4">
+                        <InputLabel for="deliver_address" value="Deliver Address"/>
+                        <el-input
+                            id="deliver_address"
+                            class="mt-1 block w-full"
+                            type="textarea"
+                            v-model="form.deliver_address"
+                            autosize
+                            placeholder="Only one valid Address can be entered in a row"
+                        />
+                        <InputError class="mt-2" :message="form.errors.deliver_address"/>
+                    </div>
 
-            <!--Work Order input -->
-            <div class="mt-4">
-                <InputLabel for="work_order" value="Work Order"/>
-                <el-input
-                    id="work_order"
-                    class="mt-1 block w-full"
-                    type="textarea"
-                    v-model="form.work_order"
-                />
-                <InputError class="mt-2" :message="form.errors.work_order"/>
-            </div>
+                    <!--Work Order input -->
+                    <div class="mt-4">
+                        <InputLabel for="work_order" value="Work Order"/>
+                        <el-input
+                            id="work_order"
+                            class="mt-1 block w-full"
+                            type="textarea"
+                            v-model="form.work_order"
+                            autosize
+                            placeholder="Only one valid Order can be entered in a row"
+                        />
+                        <InputError class="mt-2" :message="form.errors.work_order"/>
+                    </div>
 
-            <div class="flex items-center justify-center mt-4">
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Send Email
-                </PrimaryButton>
-            </div>
+                    <div class="flex items-center justify-center mt-4">
+                        <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }"
+                                       :disabled="form.processing">
+                            Send Email
+                        </PrimaryButton>
+                    </div>
 
-        </el-form>
-    </GuestLayout>
+                </el-form>
+            </el-col>
+        </el-row>
+
+    </AuthenticatedLayout>
 </template>
 
 <style scoped>
