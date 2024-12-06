@@ -26,6 +26,7 @@ class BrokerController extends AdminController
         $grid->column('company_name', __('Company Name'));
         $grid->column('broker_name', __('Broker Name'));
         $grid->column('email', __('Email'));
+        $grid->column('status', __('Send/Not'))->bool();
 
         return $grid;
     }
@@ -38,6 +39,7 @@ class BrokerController extends AdminController
         $show->field('company_name', __('Company Name'));
         $show->field('broker_name', __('Broker Name'));
         $show->field('email', __('Email'));
+        $show->field('status', __('Send/Not'));
 
         return $show;
     }
@@ -50,6 +52,10 @@ class BrokerController extends AdminController
         $form->text('company_name', __('Company Name'));
         $form->text('broker_name', __('Broker Name'));
         $form->email('email', __('Email'));
+        $form->radioCard('status', __('Send/Not'))->options([
+            false => "Not Send",
+            true => 'Send',
+        ]);
 
         return $form;
     }

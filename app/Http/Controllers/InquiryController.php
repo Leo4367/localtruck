@@ -75,11 +75,13 @@ class InquiryController extends Controller
                 'broker_name' => $send_broker->broker_name,
                 'purchasers' => $purchasers,
             ];
-            SendEmailJob::dispatch($email, $emailData)->onQueue('emails');//将发送邮件的任务放到队列名为 emails 中
-            //更新为已发送邮件状态
-            SendEmail::whereIn('purchaser_id', $new_purchaser_ids)
-                ->where('broker_id', $send_broker->id)
-                ->update(['status' => true]);
+            if ($send_broker->status) {
+                SendEmailJob::dispatch($email, $emailData)->onQueue('emails');//将发送邮件的任务放到队列名为 emails 中
+                //更新为已发送邮件状态
+                SendEmail::whereIn('purchaser_id', $new_purchaser_ids)
+                    ->where('broker_id', $send_broker->id)
+                    ->update(['status' => true]);
+            }
         }
         return redirect('/price');
     }

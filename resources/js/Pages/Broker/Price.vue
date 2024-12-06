@@ -1,6 +1,6 @@
 <script setup>
 import {Head} from "@inertiajs/vue3";
-import { onMounted, ref} from "vue";
+import {onMounted, ref} from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {ElMessage, ElMessageBox} from 'element-plus'
 import axios from "axios";
@@ -28,7 +28,7 @@ onMounted(() => {
 });
 
 // 最低价高亮
-function cellClassName({ row, column }) {
+function cellClassName({row, column}) {
     // 使用 columns.value 来代替 dataAll.columns
     const brokerColumns = columns.value.flatMap((col) =>
         col.children.map((child) => ({
@@ -42,7 +42,7 @@ function cellClassName({ row, column }) {
 
     if (!currentBroker) {
         // 如果不是 broker 列，使用默认样式
-        return { textAlign: "center" };
+        return {textAlign: "center"};
     }
 
     // 获取当前公司所有 broker 的报价
@@ -63,10 +63,14 @@ function cellClassName({ row, column }) {
     }
 
     // 默认样式
-    return { textAlign: "center" };
+    return {textAlign: "center"};
 }
 
 const cell_dblclick = (row, column) => {
+    const notAllow = ['customer_name', 'deliver_address', 'work_order', 'spread']
+    if (notAllow.includes(column.property)) {
+        return;
+    }
     const brokerName = column.property + '_id';
     const inquiry_price_id = row[brokerName];
 
@@ -132,6 +136,7 @@ const cell_dblclick = (row, column) => {
                             @cell-dblclick="cell_dblclick"
                             :header-cell-style="{ textAlign: 'center',backgroundColor:'#a1d3c5',fontWeight:'blod',color:'#000000' }"
                             :cell-style="cellClassName"
+                            height="700"
                         >
                             <el-table-column prop="customer_name" label="Name" width="180"/>
                             <el-table-column prop="deliver_address" label="Address"/>
