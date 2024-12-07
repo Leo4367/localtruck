@@ -21,6 +21,7 @@ const form = useForm({
     time_slot: '',
     type: 'Delivery',
     dock_number: '',
+    vehicle_type: '',
 });
 
 // 自动填充用户信息（如果已登录）
@@ -205,6 +206,19 @@ const chooseDock = (dock_value) => {
                 <InputError class="mt-2" :message="form.errors.po_number"/>
             </div>
 
+            <!-- Vehicle Type Input-->
+            <div class="mt-4">
+                <InputLabel for="vehicle_type" value="Vehicle Type" />
+                <TextInput
+                    id="vehicle_type"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.vehicle_type"
+                    required
+                />
+                <InputError class="mt-2" :message="form.errors.vehicle_type" />
+            </div>
+
             <!-- Dock Number Input -->
             <div class="mt-4">
                 <InputLabel for="dock_number" value="Dock Number"/>
@@ -306,5 +320,9 @@ const chooseDock = (dock_value) => {
 .booked {
     color: grey;
     cursor: not-allowed;
+}
+
+#time_slot {
+    border-radius: 5px;
 }
 </style>

@@ -20,6 +20,7 @@ class Delivery extends Model
         'po_number',
         'dock_number',
         'user_id',
+        'vehicle_type',
     ];
 
     public function warehouse()

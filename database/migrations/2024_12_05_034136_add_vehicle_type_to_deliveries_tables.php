@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::table('deliveries', function (Blueprint $table) {
             $table->string('vehicle_type')->after('dock_number')->nullable();
         });
+
+        Schema::table('pickups', function (Blueprint $table) {
+            $table->string('vehicle_type')->after('dock_number')->nullable();
+        });
     }
 
     /**
@@ -22,6 +26,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('deliveries', function (Blueprint $table) {
+            $table->dropColumn('vehicle_type');
+        });
+        Schema::table('pickups', function (Blueprint $table) {
             $table->dropColumn('vehicle_type');
         });
     }
