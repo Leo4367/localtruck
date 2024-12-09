@@ -9,6 +9,7 @@ use Carbon\Traits\Date;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use JetBrains\PhpStorm\NoReturn;
 
 class TestData extends Command
 {
@@ -127,7 +128,7 @@ class TestData extends Command
         return $result;
     }
 
-    protected function fulljustify()
+    protected function fulljustify(): void
     {
         $words = ["This", "is", "an", "example", "of", "text", "justification."];
         $maxWidth = 16;
@@ -231,6 +232,12 @@ class TestData extends Command
         } else {
             $this->error('无效的电子邮件地址：' . $email);
         }
+    }
+
+    protected function group_anagrams()
+    {
+        $signature = 'app:test group_anagrams';
+        $strs = ["eat","tea","tan","ate","nat","bat"];
     }
 
 }
