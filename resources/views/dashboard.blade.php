@@ -53,7 +53,7 @@
                 x: {
                     title: {
                         display: true,
-                        text: 'date',
+                        text: 'Date',
                         color: '#ffffff' // 设置 Y 轴标题颜色
                     },
                     ticks: {

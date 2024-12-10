@@ -61,6 +61,13 @@ Route::get('/priceparent', function () {
     return Inertia::render('Broker/PriceParent');
 })->name('priceparent');
 
+Route::get('/test-data', function () {
+    return Inertia::render('Charts/TestData');
+})->name('test-data');
+
+Route::get('/test-echarts', function () {
+    return Inertia::render('Charts/Echarts');
+})->name('test-echarts');
 
 
 

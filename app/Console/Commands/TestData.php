@@ -237,7 +237,100 @@ class TestData extends Command
     protected function group_anagrams()
     {
         $signature = 'app:test group_anagrams';
-        $strs = ["eat","tea","tan","ate","nat","bat"];
+        $strs = ["eat", "tea", "tan", "ate", "nat", "bat"];
+        $map = [];
+        foreach ($strs as $str) {
+            $arr = str_split($str);
+            sort($arr);
+            $temp = implode('', $arr);
+            $map[$temp][] = $str;
+        }
+        dd(array_values($map));
+    }
+
+    protected function longestConsecutive()
+    {
+        $signature = 'app:test longestConsecutive';
+        $nums = [9, 1, 4, 7, 3, -1, 0, 5, 8, -1, 6];
+        if (empty($nums)) return 0;
+        $set = array_flip($nums);
+        $longest = 0;
+        foreach ($nums as $num) {
+            if (!isset($set[$num - 1])) {
+                $currentNum = $num;
+                $currentStreak = 1;
+
+                while (isset($set[$currentNum + 1])) {
+                    $currentNum++;
+                    $currentStreak++;
+                }
+                $longest = max($longest, $currentStreak);
+            }
+
+        }
+        //return $longest;
+        dd($longest);
+    }
+
+    protected function maxArea()
+    {
+        $signature = 'php artisan app:test maxArea';
+        $height = [1, 8, 6, 2, 5, 4, 8, 3, 7];
+        $left = 0;
+        $right = count($height) - 1;
+        $maxArea = 0;
+
+        while ($left < $right) {
+            // 最小的高 * 底边长x轴
+            $currentArea = min($height[$left], $height[$right]) * ($right - $left);
+            $maxArea = max($maxArea, $currentArea);
+
+            if ($height[$left] < $height[$right]) {
+                $left++;
+            } else {
+                $right--;
+            }
+        }
+        dd($maxArea);
+    }
+
+    protected function threeSum()
+    {
+        $signature = 'php artisan app:test threeSum';
+        $nums = [-1, 0, 1, 2, -1, -4];
+        sort($nums);
+        $result = [];
+        $n = count($nums);
+
+        for ($i = 0; $i < $n - 2; $i++) {
+            if ($i > 0 && $nums[$i] == $nums[$i - 1]) {
+                continue;
+            }
+            $left = $i + 1;
+            $right = $n - 1;
+            while ($left < $right) {
+                $sum = $nums[$i] + $nums[$left] + $nums[$right];
+                if ($sum == 0) {
+                    $result[] = [$nums[$i], $nums[$left], $nums[$right]];
+
+                    while ($left < $right && $nums[$left] == $nums[$left + 1]) {
+                        $left++;
+                    }
+                    while ($left < $right && $nums[$right] == $nums[$right - 1]) {
+                        $right--;
+                    }
+                    $left++;
+                    $right--;
+                } elseif ($sum < 0) {
+                    $left++;
+                } else {
+                    $right--;
+                }
+            }
+        }
+        //return $result;
+        dd($result);
+
     }
 
 }

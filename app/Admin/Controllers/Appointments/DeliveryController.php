@@ -30,7 +30,7 @@ class DeliveryController extends AdminController
         $grid->column('driver_name', __('Company Name'));
         $grid->column('phone_number', __('Phone Number'));
         $grid->column('po_number', __('PO#'));
-        $grid->column('vehicle_type', __('Type'));
+        $grid->column('vehicle_type', __('Type'))->editable();
         $grid->column('appt_number', __('Container Number'));
         $grid->column('dock_number', __('Dock#'));
         $grid->column('warehouse_id', __('Warehouse'))->editable('select', Warehouse::where('status', 1)->pluck('name', 'id')->toArray());
@@ -129,7 +129,7 @@ class DeliveryController extends AdminController
         $form->display('driver_name', __('Company Name'));
         $form->display('phone_number', __('Phone Number'));
         $form->display('po_number', __('PO#'));
-        $form->display('vehicle_type', __('Type'));
+        $form->text('vehicle_type', __('Type'));
         $form->display('appt_number', __('Container Number'));
         $form->display('dock_number', __('Dock#'));
         $form->select('warehouse_id', __('Warehouse'))->options(Warehouse::where('status',1)->pluck('name', 'id')->toArray());

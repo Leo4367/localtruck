@@ -24,9 +24,9 @@ class InquiryPriceController extends AdminController
         $grid = new Grid(new InquiryPrice());
 
         $grid->column('id', __('Id'))->hide();
-        $grid->column('work.customer_name', __('Customer Name'));
-        $grid->column('work.address', __('Address'));
-        $grid->column('work.work_order', __('Work Order'));
+        $grid->column('purchaser.customer_name', __('Customer Name'));
+        $grid->column('purchaser.address', __('Address'));
+        $grid->column('purchaser.work_order', __('Work Order'));
         $grid->column('broker.company_name', __('Company Name'));
         $grid->column('broker.broker_name', __('Broker Name'));
         $grid->column('broker.email', __('Broker Email'));
@@ -41,9 +41,9 @@ class InquiryPriceController extends AdminController
         $show = new Show(InquiryPrice::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('work.customer_name', __('Customer Name'));
-        $show->field('work.address', __('Address'));
-        $show->field('work.work_order', __('Work Order'));
+        $show->field('purchaser.customer_name', __('Customer Name'));
+        $show->field('purchaser.address', __('Address'));
+        $show->field('purchaser.work_order', __('Work Order'));
         $show->field('broker.company_name', __('Company Name'));
         $show->field('broker.broker_name', __('Broker Name'));
         $show->field('broker.email', __('Broker Email'));
@@ -59,7 +59,7 @@ class InquiryPriceController extends AdminController
         $form = new Form(new InquiryPrice());
 
         $form->display('id', __('ID'));
-        $form->text('work.id', __('Customer ID'));
+        $form->text('purchaser.id', __('Customer ID'));
         $form->text('broker.id', __('Broker ID'));
         $form->decimal('price', __('Price'));
 
