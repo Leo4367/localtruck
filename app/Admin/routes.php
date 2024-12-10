@@ -2,6 +2,7 @@
 
 use App\Admin\Controllers\Appointments\DeliveryTimeController;
 use App\Admin\Controllers\Appointments\PickupTimeController;
+use App\Admin\Controllers\Appointments\VehicleTypeController;
 use App\Admin\Controllers\InquiryPrice\InquiryPriceController;
 use App\Admin\Controllers\InquiryPrice\PurchaserController;
 use App\Admin\Controllers\InquiryPrice\SendEmailController;
@@ -32,6 +33,9 @@ Route::group([
     $router->resource('/appointment/alltimeslots', AllTimeSlotsController::class);
     $router->resource('/appointment/pickup-times', PickupTimeController::class);
     $router->resource('/appointment/delivery-times', DeliveryTimeController::class);
+    $router->resource('/appointment/vehicle-types', VehicleTypeController::class);
+
+
     $router->resource('/inquiryprice/send-email', SendEmailController::class);
     $router->resource('/inquiryprice/inquiry-price', InquiryPriceController::class);
     $router->resource('/inquiryprice/purchaser', PurchaserController::class);

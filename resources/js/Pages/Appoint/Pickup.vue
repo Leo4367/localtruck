@@ -21,7 +21,7 @@ const form = useForm({
     warehouse_id: '',
     type: 'Pickup',
     dock_number: '',
-    vehicle_type: '',
+    //vehicle_type: '',
 });
 
 
@@ -204,7 +204,7 @@ const chooseDock = (dock_value) => {
                 />
                 <InputError class="mt-2" :message="form.errors.po_number"/>
             </div>
-            <!-- Vehicle Type Input-->
+            <!-- Vehicle
             <div class="mt-4">
                 <InputLabel for="vehicle_type" value="Vehicle Type" />
                 <TextInput
@@ -216,6 +216,7 @@ const chooseDock = (dock_value) => {
                 />
                 <InputError class="mt-2" :message="form.errors.vehicle_type" />
             </div>
+            Type Input-->
             <!-- Dock Number Input -->
             <div class="mt-4">
                 <InputLabel for="dock_number" value="Dock Number"/>

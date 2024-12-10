@@ -20,11 +20,15 @@ class Delivery extends Model
         'po_number',
         'dock_number',
         'user_id',
-        'vehicle_type',
+        'vehicle_type_id',
     ];
 
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id');
+    }
+
+    public function vehicle_type(){
+        return $this->belongsTo(VehicleType::class,'vehicle_type_id');
     }
 }

@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('deliveries', function (Blueprint $table) {
-            $table->string('vehicle_type')->after('dock_number')->nullable();
+            $table->bigInteger('vehicle_type_id')->after('dock_number')->nullable()->default(null);
         });
 
         Schema::table('pickups', function (Blueprint $table) {
-            $table->string('vehicle_type')->after('dock_number')->nullable();
+            $table->bigInteger('vehicle_type_id')->after('dock_number')->nullable()->default(null);
         });
     }
 
@@ -26,10 +26,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('deliveries', function (Blueprint $table) {
-            $table->dropColumn('vehicle_type');
+            $table->dropColumn('vehicle_type_id');
         });
         Schema::table('pickups', function (Blueprint $table) {
-            $table->dropColumn('vehicle_type');
+            $table->dropColumn('vehicle_type_id');
         });
     }
 };

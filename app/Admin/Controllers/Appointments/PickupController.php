@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers\Appointments;
 
 use App\Models\Pickup;
+use App\Models\VehicleType;
 use App\Models\Warehouse;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
@@ -30,7 +31,7 @@ class PickupController extends AdminController
         $grid->column('driver_name', __('Company Name'));
         $grid->column('phone_number', __('Phone Number'));
         $grid->column('po_number', __('PO#'));
-        $grid->column('vehicle_type', __('Type'))->editable();
+        $grid->column('vehicle_type_id', __('Type'))->editable('select', VehicleType::where('status', 1)->pluck('name', 'id')->toArray());
         $grid->column('appt_number', __('Pickup Number'));
         $grid->column('dock_number', __('Dock#'));
         $grid->column('warehouse_id', __('Warehouse'))->editable('select', Warehouse::where('status', 1)->pluck('name', 'id')->toArray());
@@ -97,7 +98,7 @@ class PickupController extends AdminController
         $show->field('driver_name', __('Company Name'));
         $show->field('phone_number', __('Phone Number'));
         $show->field('po_number', __('PO#'));
-        $show->field('vehicle_type', __('Type'));
+        $show->field('vehicle_type_id', __('Type'));
         $show->field('pickup_number', __('Pick Number'));
         $show->field('dock_number', __('Dock#'));
         $show->field('warehouse.name', __('Warehouse'));
@@ -130,7 +131,7 @@ class PickupController extends AdminController
         $form->display('driver_name', __('Company Name'));
         $form->display('phone_number', __('Phone Number'));
         $form->display('po_number', __('PO#'));
-        $form->text('vehicle_type', __('Type'));
+        $form->text('vehicle_type_id', __('Type'))->options(VehicleType::where('status',1)->pluck('name', 'id')->toArray());
         $form->display('pickup_number', __('Pick Number'));
         $form->display('dock_number', __('Dock#'));
         $form->select('warehouse_id', __('Warehouse'))->options(Warehouse::where('status',1)->pluck('name', 'id')->toArray());
