@@ -30,12 +30,12 @@ class DeliveryController extends AdminController
         $grid->column('completion_time', __('Completion Time'))->color('green')->sortable();
         $grid->column('driver_name', __('Company Name'));
         $grid->column('phone_number', __('Phone Number'));
-        $grid->column('po_number', __('PO#'));
+        $grid->column('po_number', __('PO#'))->editable();
         $grid->column('vehicle_type_id', __('Type'))->editable('select', VehicleType::where('status', 1)->pluck('name', 'id')->toArray());
         $grid->column('appt_number', __('Container Number'));
         $grid->column('dock_number', __('Dock#'));
         $grid->column('warehouse_id', __('Warehouse'))->editable('select', Warehouse::where('status', 1)->pluck('name', 'id')->toArray());
-        $grid->column('status')->select([
+        $grid->column('status')->editable('select', [
             0 => 'No-Show',
             1 => 'Scheduled',
             2 => 'Completed',
@@ -129,11 +129,11 @@ class DeliveryController extends AdminController
         $form->display('completion_time', __('Completion Time'));
         $form->display('driver_name', __('Company Name'));
         $form->display('phone_number', __('Phone Number'));
-        $form->display('po_number', __('PO#'));
-        $form->text('vehicle_type_id', __('Type'))->options(VehicleType::where('status',1)->pluck('name', 'id')->toArray());
+        $form->text('po_number', __('PO#'));
+        $form->text('vehicle_type_id', __('Type'))->options(VehicleType::where('status', 1)->pluck('name', 'id')->toArray());
         $form->display('appt_number', __('Container Number'));
         $form->display('dock_number', __('Dock#'));
-        $form->select('warehouse_id', __('Warehouse'))->options(Warehouse::where('status',1)->pluck('name', 'id')->toArray());
+        $form->select('warehouse_id', __('Warehouse'))->options(Warehouse::where('status', 1)->pluck('name', 'id')->toArray());
         $form->radioCard('status', __('Status'))->options([
             0 => 'No-Show',
             1 => 'Scheduled',

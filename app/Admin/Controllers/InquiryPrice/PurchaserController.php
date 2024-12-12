@@ -94,11 +94,17 @@ class PurchaserController extends AdminController
         $grid->column('work_order', __('Work Order'));
         //$grid->column('work_order')->view('emails.broker_inquiry');
 
-        $grid->disableActions();
-        $grid->disableCreateButton();
-        $grid->batchActions(function ($batch) {
-            $batch->disableDelete(); // 禁用批量删除按钮
+        $grid->actions(function ($actions) {
+            // 去掉编辑
+            $actions->disableEdit();
+
+            // 去掉查看
+            $actions->disableView();
         });
+        $grid->disableCreateButton();
+        /*$grid->batchActions(function ($batch) {
+            $batch->disableDelete(); // 禁用批量删除按钮
+        });*/
 
         return $grid;
     }
