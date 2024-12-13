@@ -36,7 +36,7 @@ Route::group([
     $router->resource('/appointment/vehicle-types', VehicleTypeController::class);
 
 
-    $router->resource('/inquiryprice/send-email', SendEmailController::class);
+    $router->resource('/inquiryprice/send-emails', SendEmailController::class);
     $router->resource('/inquiryprice/inquiry-price', InquiryPriceController::class);
     $router->resource('/inquiryprice/purchaser', PurchaserController::class);
     $router->resource('/inquiryprice/broker', BrokerController::class);

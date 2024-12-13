@@ -13,18 +13,15 @@ class BrokerInquiryMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $customerName;
-    public $address;
-    public $workOrder;
+    public $data;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($customerName, $address, $workOrder)
+    public function __construct($data)
     {
-        $this->customerName = $customerName;
-        $this->address = $address;
-        $this->workOrder = $workOrder;
+        $this->data = $data;
+
     }
 
     /**
@@ -32,8 +29,9 @@ class BrokerInquiryMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $date = date("Y-m-d");
         return new Envelope(
-            subject: 'Broker Inquiry Mail',
+            subject: 'Broker Inquiry Mail' . ' ' . $date,
         );
     }
 
@@ -43,7 +41,7 @@ class BrokerInquiryMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.test',
         );
     }
 
@@ -57,14 +55,4 @@ class BrokerInquiryMail extends Mailable
         return [];
     }
 
-    public function build(): BrokerInquiryMail
-    {
-        return $this->subject('询价邮件')
-            ->view('emails.broker_inquiry') // 指向模板
-            ->with([
-                'customerName' => $this->customerName,
-                'address' => $this->address,
-                'workOrder' => $this->workOrder,
-            ]);
-    }
 }
