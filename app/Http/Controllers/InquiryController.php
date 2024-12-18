@@ -21,7 +21,9 @@ class InquiryController extends Controller
             'customer_name' => 'required|string',
             'deliver_address' => 'required|string',
             'work_order' => 'required|string',
+            'email_date' => 'required|date|date_format:Y-m-d',
         ]);
+        $email_date = $request->email_date??date('Y-m-d');
 
         // 将每个 textarea 的内容按行分割成数组
         $customerNames = array_map('trim', explode("\n", $request->input('customer_name')));
@@ -74,6 +76,7 @@ class InquiryController extends Controller
             $emailData = [
                 'broker_name' => $send_broker->broker_name,
                 'purchasers' => $purchasers,
+                'email_date' => $email_date,
             ];
             if ($send_broker->status) {
                 SendEmailJob::dispatch($email, $emailData)->onQueue('emails');//将发送邮件的任务放到队列名为 emails 中

@@ -11,6 +11,7 @@ const form = useForm({
     customer_name: '',
     deliver_address: '',
     work_order: '',
+    email_date: '',
 });
 
 
@@ -90,6 +91,22 @@ const submit = () => {
                             placeholder="Only one valid Order can be entered in a row"
                         />
                         <InputError class="mt-2" :message="form.errors.work_order"/>
+                    </div>
+
+                    <!--Email Date input-->
+                    <div class="mt-4">
+                        <InputLabel for="email_date" value="Email Date"/>
+                        <el-date-picker
+                            class="mt-1 block w-full form-control"
+                            v-model=form.email_date
+                            type="date"
+                            placeholder="pick a date"
+                            format="YYYY-MM-DD"
+                            value-format="YYYY-MM-DD"
+                            style="width:100%;"
+                            :editable="false"
+                        />
+                        <InputError class="mt-2" :message="form.errors.email_date"/>
                     </div>
 
                     <div class="flex items-center justify-center mt-4">

@@ -69,6 +69,9 @@ Route::get('/test-echarts', function () {
     return Inertia::render('Charts/Echarts');
 })->name('test-echarts');
 
+Route::get('/temp-result', function () {
+    return Inertia::render('Temp/Result');
+})->name('temp-result');
 
 
 Route::post('/appointment', [AppointmentController::class, 'store'])->name('appointment.store');
@@ -79,4 +82,4 @@ Route::get('/booked-warehouse', [AppointmentController::class, 'getBookedWarehou
 Route::post('/broker-sendemail', [InquiryController::class, 'store'])->name('inquiry.store');
 Route::get('/broker-sendemail', [InquiryController::class, 'index'])->name('inquiry.index');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

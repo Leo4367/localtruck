@@ -29,7 +29,7 @@ class BrokerInquiryMail extends Mailable
      */
     public function envelope(): Envelope
     {
-        $date = date("Y-m-d");
+        $date = $this->data['email_date'];
         return new Envelope(
             subject: 'Broker Inquiry Mail' . ' ' . $date,
         );

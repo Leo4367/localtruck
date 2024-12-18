@@ -333,4 +333,187 @@ class TestData extends Command
 
     }
 
+    protected function minSubArrayLen()
+    {
+        $signature = 'php artisan app:test minSubArrayLen';
+        $target = 7;
+        $nums = [2, 3, 1, 2, 4, 3];
+        $n = count($nums);
+        $minLength = PHP_INT_MAX;
+        $currentSum = 0;
+        $left = 0;
+
+        for ($right = 0; $right < $n; $right++) {
+            $currentSum += $nums[$right];
+
+            while ($currentSum >= $target) {
+                $minLength = min($minLength, $right - $left + 1);
+
+                $currentSum -= $nums[$left];
+                $left++;
+            }
+        }
+
+        return $minLength === PHP_INT_MAX ? 0 : $minLength;
+        //$minLength = $minLength === PHP_INT_MAX ? 0 : $minLength;
+        //dd('The minSubArrayLen is :' . $minLength);
+    }
+
+    protected function isIsomorphic()
+    {
+        $signature = 'php artisan app:test isIsomorphic';
+        $s = 'egg';
+        $t = 'add';
+
+        if (strlen($s) !== strlen($t)) {
+            $this->warn('false');
+        }
+        $map_s_to_t = [];
+        $map_t_to_s = [];
+
+        for ($i = 0; $i < strlen($s); $i++) {
+            if (isset($map_s_to_t[$s[$i]])) {
+                if ($map_s_to_t[$s[$i]] !== $t[$i]) {
+                    $this->warn('false');
+                }
+            } else {
+                $map_s_to_t[$s[$i]] = $t[$i];
+            }
+
+            if (isset($map_t_to_s[$t[$i]])) {
+                if ($map_t_to_s[$t[$i]] !== $s[$i]) {
+                    $this->warn('false');
+                }
+            } else {
+                $map_t_to_s[$t[$i]] = $s[$i];
+            }
+        }
+        $this->info('true');
+    }
+
+
+    protected function trapRain()
+    {
+        $signature = 'php artisan app:test trapRain';
+        $height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
+        if (count($height) < 3) return 0;
+        $left = 0;
+        $right = count($height) - 1;
+        $left_max = $height[$left];
+        $right_max = $height[$right];
+        $water_trapped = 0;
+
+        while ($left < $right) {
+            if ($left_max <= $right_max) {
+                $left++;
+                $left_max = max($left_max, $height[$left]);
+                $water_trapped += max(0, $left_max - $height[$left]);
+            } else {
+                $right--;
+                $right_max = max($right_max, $height[$right]);
+                $water_trapped += max(0, $right_max - $height[$right]);
+            }
+        }
+        $this->info($water_trapped);
+    }
+
+    protected function bubblesort()
+    {
+        $signature = 'php artisan app:test bubblesort';
+        $nums = [64, 34, 25, 12, 22, 11, 90];
+        $n = count($nums);
+
+        for ($i = 0; $i < $n; $i++) {
+            for ($j = 0; $j < $n - 1 - $i; $j++) {
+                if ($nums[$j] > $nums[$j + 1]) {
+                    $temp = $nums[$j];
+                    $nums[$j] = $nums[$j + 1];
+                    $nums[$j + 1] = $temp;
+                }
+            }
+        }
+        dd($nums);
+    }
+
+    protected function lengthOfLongest()
+    {
+        $signature = 'php artisan app:test lengthOfLongest';
+        $s = "abcabcbb";
+        $n = strlen($s);
+        $max_len = 0;
+        $left = 0;
+        $char_map = [];
+        for ($right = 0; $right < $n; $right++) {
+            if (isset($char_map[$s[$right]]) && $char_map[$s[$right]] >= $left) {
+                $left = $char_map[$s[$right]] + 1;
+            }
+            $char_map[$s[$right]] = $right;
+
+            $max_len = max($max_len, $right - $left + 1);
+        }
+        $this->info($max_len);
+        //return $max_len;
+    }
+
+    protected function anagram()
+    {
+        $signature = 'php artisan app:test anagram';
+        $s = 'cbaebabacd';
+        $p = 'abc';
+        $n = strlen($s);
+        $m = strlen($p);
+        if ($m > $n) return [];
+
+        $res = [];
+        $p_count = array_fill(0, 26, 0);
+        $window_count = array_fill(0, 26, 0);
+
+        for ($i = 0; $i < $m; $i++) {
+            $p_count[ord($p[$i]) - ord('a')]++;
+        }
+        for ($i = 0; $i < $n; $i++) {
+            $window_count[ord($s[$i]) - ord('a')]++;
+        }
+
+        if ($p_count === $window_count) {
+            $res[] = 0;
+        }
+        for ($i = $m; $i < $n; $i++) {
+            $window_count[ord($s[$i]) - ord('a')]++;
+            $window_count[ord($s[$i - $m]) - ord('a')]--;
+
+            if ($p_count === $window_count) {
+                $res[] = $i - $m + 1;
+            }
+        }
+        dd($res);
+
+    }
+
+
+    protected function check_roll()
+    {
+        $signature = 'php artisan app:test check_roll';
+        $height = [4, 2, 0, 3, 2, 5];
+        if (count($height) < 3) return 0;
+        $left = 0;
+        $right = count($height) - 1;
+        $left_max = $height[$left];
+        $right_max = $height[$right];
+        $water_trapped = 0;
+
+        while ($left < $right) {
+            if ($left_max <= $right_max) {
+                $left++;
+                $left_max = max($left_max, $height[$left]);
+                $water_trapped += max(0, $left_max - $height[$left]);
+            } else {
+                $right--;
+                $right_max = max($right_max, $height[$right]);
+                $water_trapped += max(0, $right_max - $height[$right]);
+            }
+        }
+        dd($water_trapped);
+    }
+
 }
