@@ -28,13 +28,13 @@ class DeliveryController extends AdminController
         $grid->column('id', __('ID'))->sortable()->hide();
         $grid->column('time_slot', __('Time Slot'))->sortable();
         $grid->column('completion_time', __('Completion Time'))->color('green')->sortable();
-        $grid->column('driver_name', __('Company Name'));
+        $grid->column('driver_name', __('Company Name'))->sortable();
         $grid->column('phone_number', __('Phone Number'));
         $grid->column('po_number', __('PO#'))->editable();
         $grid->column('vehicle_type_id', __('Type'))->editable('select', VehicleType::where('status', 1)->pluck('name', 'id')->toArray());
         $grid->column('appt_number', __('Container Number'));
-        $grid->column('dock_number', __('Dock#'));
-        $grid->column('warehouse_id', __('Warehouse'))->editable('select', Warehouse::where('status', 1)->pluck('name', 'id')->toArray());
+        $grid->column('dock_number', __('Dock#'))->sortable();
+        $grid->column('warehouse_id', __('Warehouse'))->editable('select', Warehouse::where('status', 1)->pluck('name', 'id')->toArray())->sortable();
         $grid->column('status')->editable('select', [
             0 => 'No-Show',
             1 => 'Scheduled',
@@ -56,6 +56,7 @@ class DeliveryController extends AdminController
                 $filter->like('phone_number', 'Phone Number');
                 $filter->like('appt_number', 'Container Number');
                 $filter->equal('warehouse_id', 'Warehouse')->select(Warehouse::where('status', 1)->pluck('name', 'id'));
+                $filter->equal('vehicle_type_id', 'Type')->select(VehicleType::where('status', 1)->pluck('name', 'id'));
                 // 设置created_at字段的范围查询
                 $filter->between('created_at', 'Created Time')->datetime();
             });
